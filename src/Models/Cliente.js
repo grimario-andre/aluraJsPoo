@@ -4,16 +4,17 @@ export class Cliente {
     #primeiroNome;
     #numeroDeRegistro;
     #contaBancaria;
+    #senha
 
-    constructor(primeiroNome, numeroDeRegistro, tipoDeConta, numeroDaAgencia) {
+    constructor(primeiroNome, numeroDeRegistro, tipoDeConta, numeroDaAgencia, senha) {
         this.setPrimeiroNome(primeiroNome);
         // this.setNumeroDeRegistro(numeroDeRegistro);
         this.#numeroDeRegistro = numeroDeRegistro;
-        //Instância da classe Conta
-        this.#contaBancaria = new Conta();
-        this.#contaBancaria.setTipoDeConta(tipoDeConta);
-        this.#contaBancaria.setNumeroDaAgencia(numeroDaAgencia);
-        Conta.incrementoTotalDeContasBancarias();
+        //Instância da classe Conta e Passando paramentro para Instância da classe TipoDeConta
+        this.#contaBancaria = new Conta(tipoDeConta, numeroDaAgencia);
+        this.#senha = senha;
+        this.autenticavel = 1;
+
     }
 
     //Getters&&Setters
@@ -29,35 +30,18 @@ export class Cliente {
         return this.#numeroDeRegistro;
     }
 
-    // setNumeroDeRegistro(numeroDeRegistro) {
-    //     return this.#numeroDeRegistro = numeroDeRegistro;
-    // }
-
     getContaBancaria() {
         return this.#contaBancaria;
     }
 
-    transferirQuantia(valorATransferir, clienteDestinario) {
-        const saldo = this.#contaBancaria.getSaldo();
-        if (saldo < 0) {
-            console.log('saldo é igual a zero');
-            
-            return `Saldo insuficiente ${saldo}`;
-        }
-
-        let valorASacar = valorATransferir;
-        this.#contaBancaria.sacar(valorASacar);
-
-        clienteDestinario.#contaBancaria.depositar(valorATransferir);
-    }
-
-    dadosDoCliente(cliente) {
+    dadosDoCliente() {
         return console.log(`
             ====== Dados do Cliente ======
-            Cliente: ${cliente.getPrimeiroNome()}
-            Número de Registro: ${cliente.getNumeroDeRegistro()}
-            Conta: ${cliente.#contaBancaria.getTipoDeConta()}
-            Saldo: ${cliente.#contaBancaria.getSaldo()}
+            Cliente: ${this.getPrimeiroNome()}
+            Número de Registro: ${this.getNumeroDeRegistro()}
+            Conta: ${this.#contaBancaria.getTipoDeConta().getTipoContaBancaria()}
+            Agencia: ${this.#contaBancaria.getNumeroDaAgencia()}
+            Saldo: ${this.#contaBancaria.consultarSaldo()}
         `);
 
     }
@@ -66,24 +50,39 @@ export class Cliente {
         return console.log(`
             ======= Dados do Depósito =======
             Cliente: ${cliente.getPrimeiroNome()}
-            Conta: ${cliente.#contaBancaria.getTipoDeConta()}
+            Conta: ${cliente.#contaBancaria.getTipoDeConta().getTipoContaBancaria()}
             Valor do depósito: ${valorDoDeposito}
-            Saldo: ${cliente.#contaBancaria.getSaldo()}
+            Saldo: ${cliente.#contaBancaria.consultarSaldo()}
         `);
     }
 
-    dadosDaTransferencia(clienteDestinario, valorDaTransferencia) {
+    dadosDoSaque(cliente, valorDoSaque) {
         return console.log(`
-            ======= Dados da Transferência =======
-            ClienteRemetente: ${this.getPrimeiroNome()}
-            Conta: ${this.#contaBancaria.getTipoDeConta()}
-            
-            +++++++++++++++++++++++++++++++++++++++++++++++
-            Valor da Transferência: ${valorDaTransferencia}
-
-            ClienteDestinatário: ${clienteDestinario.getPrimeiroNome()}
-            Conta: ${clienteDestinario.#contaBancaria.getTipoDeConta()}
-            
+            ======= Dados do Saque =======
+            Cliente: ${cliente.getPrimeiroNome()}
+            Conta: ${cliente.#contaBancaria.getTipoDeConta().getTipoContaBancaria()}
+            Valor do depósito: ${valorDoSaque}
+            Valor da taxa: ${cliente.#contaBancaria.getTipoDeConta().getTipoDeConta().consultarTaxa()}
+            Saldo: ${cliente.#contaBancaria.consultarSaldo()}
         `);
+    }
+
+    // dadosDaTransferencia(clienteDestinario, valorDaTransferencia) {
+    //     return console.log(`
+    //         ======= Dados da Transferência =======
+    //         ClienteRemetente: ${this.getPrimeiroNome()}
+    //         Conta: ${this.#contaBancaria.getNomeTipoDeConta()}
+            
+    //         +++++++++++++++++++++++++++++++++++++++++++++++
+    //         Valor da Transferência: ${valorDaTransferencia}
+
+    //         ClienteDestinatário: ${clienteDestinario.getPrimeiroNome()}
+    //         Conta: ${clienteDestinario.#contaBancaria.getNomeTipoDeConta().getTipodeConta()}
+            
+    //     `);
+    // }
+
+    autenticar() {
+        return true;
     }
 }
